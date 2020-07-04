@@ -14,6 +14,7 @@ master |[![Build Status](https://travis-ci.org/Neargye/hello_tf_c_api.svg)]()|[!
 * [Load model](example/load_model/), загрузка модели нейронной сети и её использования в С++. 
 
 Сборка на Windows
+
 !ВАЖНО! Перед сборкой проект в файле [CMakeLists.txt](example/load_model/CMakeLists.txt), на строке set(OpenCV_DIR "C:/Program Files/opencv/build") под номером 42, укажите путь до вашей папки с собранной библиотекой OpenCV.
 ```cmd
 git clone https://github.com/Artemy2807/cflow.git
