@@ -30,12 +30,13 @@ Tensor::Tensor(TF_Graph* graph, const std::string& operation_name) {
 
 // Дескриптор
 Tensor::~Tensor() {
-	clean();
+	this->tensor = nullptr;
+    this->data = nullptr;
 }
 
 // Методы
 void Tensor::clean() {
-    this->data = nullptr;
+	if(this->tensor != nullptr) TF_DeleteTensor(this->tensor);
 }
 
 void Tensor::set(const std::vector<float>& data_input) {
@@ -49,7 +50,7 @@ void Tensor::set(const std::vector<float>& data_input) {
 	}
     if(tensor != nullptr) TF_DeleteTensor(tensor);
     // Лямбда функция для удаления указателя
-	auto dealloator = [](void* ddata, size_t, void*) { free(static_cast<float*>(ddata)); };
+	auto dealloator = [](void* ddata, size_t, void*) {  };
     int64_t exp_size = std::abs(std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int64_t>()));
 	std::unique_ptr<std::vector<int64_t>> actual_shape = std::make_unique<std::vector<int64_t>>(shape.begin(), shape.end());
 	std::replace_if(actual_shape->begin(), actual_shape->end(), [](int64_t r) { return r == -1; }, data_input.size() / exp_size);

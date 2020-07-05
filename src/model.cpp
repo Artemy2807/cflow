@@ -54,9 +54,7 @@ int Model::load(const std::string& model_path) {
 	printf("Successfully imported model %s.\n", model_path.c_str());
 	TF_DeleteBuffer(graph_buffer);
     // Узнаём имя входного и выходного параметра нейронной сети
-    std::vector<std::string> operation_names = getOperation();
-    this->input_name = operation_names[0];
-    this->output_name = operation_names[operation_names.size() - 1];
+    setOperationTarget();
     // Успешно завершили функцию
 	return 0;
 }
@@ -116,6 +114,8 @@ std::vector<float> Model::predict(const cv::Mat& input, const mat_info& info_inp
     int count_element = std::accumulate(shape.begin(), shape.end(), 0);
     // Конвертируем массив в вектор для удобного использования
     output_vector = std::vector<float> {float_array, float_array + count_element};
+    output_tensor.clean();
+    mat_tensor.clean();
     return output_vector;
 }
 
@@ -136,6 +136,13 @@ void Model::predict(const std::vector<Tensor>& input, std::vector<Tensor>& outpu
     // Заполняем вектор с данными для неронной сети
     std::vector<TF_Tensor*> tensors(input.size());
     std::transform(input.begin(), input.end(), tensors.begin(), [](const Tensor& t){ return t.tensor; });
+    #ifdef DEBUG_
+    printf("Input size data: %ld\n", input.size());
+    auto input_data = static_cast<float*>(TF_TensorData(tensors[0]));
+    for(size_t i = 0; i < 1000; i++) 
+        printf("%f ", input_data[i]);
+    printf("\n");
+    #endif
     auto answer = new TF_Tensor*[output.size()];
     // Запускаем нейронную сеть
 	TF_SessionRun(session,
@@ -182,4 +189,48 @@ std::vector<float> Model::convert2Vector(const cv::Mat& input) {
     float_data = std::vector<float>(int_data.begin(), int_data.end());
     return float_data;
 }
+
+std::vector<std::string> Model::split(const std::string& input, const std::string& regex) {
+    // Разделить строку по символу regex
+    std::regex re(regex);
+    std::sregex_token_iterator
+        first{input.begin(), input.end(), re, -1},
+        last;
+    return {first, last};
+}
+
+void Model::setOperationTarget() {
+    if(this->graph == nullptr) return;
+    // Получаем имена операций
+    std::vector<std::string> operation_names = getOperation();
+    // Имя входной операции, куда отправляем данные
+    this->input_name = operation_names[0];
+    // Получаем индекс послежнего элемента
+    int last = operation_names.size() - 1;
+    // Ищем имя выходной операции, откуда забирем ответы нейронной сети
+    for(int i = last; i > 0; i--) {
+        bool isOptimizer = false;
+        for(size_t n = 0; n < optimizer_names.size(); n++) {
+            if(strstr(operation_names[i].c_str(), optimizer_names[n].c_str()) != nullptr) {
+                isOptimizer = true;
+                break;
+            }
+        }
+        // Если нет оптимизаторов обучения нейронной сети, то проверяем на наличие полносвязного слоя
+        if(!isOptimizer) {
+            for(size_t n = 0; n < last_layers_names.size(); n++) {
+                if(strstr(operation_names[i].c_str(), last_layers_names[n].c_str()) != nullptr) {
+                    this->output_name = operation_names[i];
+                    i = 0;
+                    break;
+                }
+            }
+        }
+    }
+    #ifdef DEBUG_
+    printf("Input operation name: %s\n", this->input_name.c_str());
+    printf("Output operation name: %s\n", this->output_name.c_str());
+    #endif
+}
+
 
