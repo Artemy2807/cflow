@@ -5,8 +5,8 @@
 
 Сначала необходимо скачать репозиторий, а также установить зависимости для python программ.
 ```bash
-git clone https://github.com/Artemy2807/cflow.git
-cd cflow-master/github/example/train/
+git clone https://github.com/Artemy2807/cflow.git cflow
+cd cflow/example/train/
 pip install -r requirements.txt
 ```
 В папке [img/to-learn](../../img/to-learn) есть архив images-to-learn.zip, его необходимо разархивировать. В этом файле находятся фотографии для обучения нейронной сети. Запускаем программу для обучения CNN. Программа принимает следующие параметры:
