@@ -17,8 +17,8 @@ master |[![Build Status](https://travis-ci.org/Neargye/hello_tf_c_api.svg)]()|[!
 
 !ВАЖНО! Перед сборкой проект в файле [CMakeLists.txt](example/load_model/CMakeLists.txt), на строке set(OpenCV_DIR "C:/Program Files/opencv/build") под номером 42, укажите путь до вашей папки с собранной библиотекой OpenCV.
 ```cmd
-git clone https://github.com/Artemy2807/cflow.git
-cd cflow-master/github/example/load_model/
+git clone https://github.com/Artemy2807/cflow.git cflow
+cd cflow/example/load_model/
 mkdir build && cd build
 cmake -A x64 ..
 MSBuild.exe example-load.sln -property:Configuration=Debug
@@ -28,8 +28,8 @@ example-load
 
 Сборка на Linux
 ```bash
-git clone https://github.com/Artemy2807/cflow.git
-cd cflow-master/github/example/load_model/
+git clone https://github.com/Artemy2807/cflow.git cflow
+cd cflow/example/load_model/
 mkdir build && cd build
 cmake ..
 make -j4
