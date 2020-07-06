@@ -4,11 +4,6 @@
 
 CFLOW - библиотека для облегчения работы с TensorFlow. Библиотека написана на c++. 
 
-## Official Builds
-Branch | Linux | Windows |
--------|:-----:|:-------:|
-master |[![Build Status](https://travis-ci.org/Neargye/hello_tf_c_api.svg)]()|[![Build status](https://travis-ci.org/Neargye/hello_tf_c_api.svg?branch=master)]()
-
 ## [Example](/example)
 Для просмотра более подробного описания примера нажмите на соответствующий пункт.
 * [Load model](example/load_model/), загрузка модели нейронной сети и её использования в С++. 
